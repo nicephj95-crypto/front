@@ -1,25 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// src/App.tsx
+import { ThemeProvider } from "styled-components";
+import { ThemeProviderContext, useTheme } from "./context/ThemeContext";
+import { themes } from "./style/theme";
+import { GlobalStyle } from "./style/global";
+import ThemeSwitcher from "./components/header/ThemeSwitcher";
+import Home from "./pages/home";
+
+function AppContent() {
+  const { themeName } = useTheme();
+  return (
+    <ThemeProvider theme={themes[themeName]}>
+      <GlobalStyle themeName={themeName} />
+      <ThemeSwitcher />
+      <Home />
+    </ThemeProvider>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProviderContext>
+      <AppContent />
+    </ThemeProviderContext>
   );
 }
 
