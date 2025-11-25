@@ -1,5 +1,7 @@
 // src/style/theme.ts
 export type ThemeName = "light" | "dark";
+export type HeadingSize = "large" | "medium" | "small";
+
 
 export const light = {
   name: "light",
