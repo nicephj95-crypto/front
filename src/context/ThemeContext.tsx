@@ -1,6 +1,6 @@
 // src/context/ThemeContext.tsx
 import { createContext, useContext, useState } from "react";
-import { themes, ThemeName } from "../style/theme";
+import { ThemeName } from "../style/theme";
 
 interface ThemeContextType {
   themeName: ThemeName;
