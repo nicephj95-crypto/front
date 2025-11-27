@@ -2,10 +2,14 @@
 import styled from "styled-components";
 import { ThemeProvider } from "styled-components";
 import Navigation from "./components/header/Navigation";
+import { AuthProvider } from "./context/AuthContext";
 import { ThemeProviderContext, useTheme } from "./context/ThemeContext";
 import { useHashRouter } from "./hooks/useHashRouter";
 import Home from "./pages/home";
+import Login from "./pages/login";
+import ResetPassword from "./pages/resetPassword";
 import Signup from "./pages/signup";
+import BookList from "./pages/books";
 import { GlobalStyle } from "./style/global";
 import { themes } from "./style/theme";
 
@@ -17,6 +21,12 @@ function AppContent() {
     switch (route) {
       case "/signup":
         return <Signup />;
+      case "/login":
+        return <Login />;
+      case "/reset-password":
+        return <ResetPassword />;
+      case "/books":
+        return <BookList />;
       case "/":
       default:
         return <Home />;
@@ -26,10 +36,12 @@ function AppContent() {
   return (
     <ThemeProvider theme={themes[themeName]}>
       <GlobalStyle themeName={themeName} />
-      <AppShell>
-        <Navigation currentRoute={route} onNavigate={navigate} />
-        <ContentArea>{renderPage()}</ContentArea>
-      </AppShell>
+      <AuthProvider>
+        <AppShell>
+          <Navigation currentRoute={route} onNavigate={navigate} />
+          <ContentArea>{renderPage()}</ContentArea>
+        </AppShell>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
