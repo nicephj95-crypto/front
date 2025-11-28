@@ -19,6 +19,12 @@ const navItems = [
 
 function Navigation({ currentRoute, onNavigate }: Props) {
   const { user, logout } = useAuth();
+  const isActive = (path: string) => {
+    if (path === "/books") {
+      return currentRoute.startsWith("/books");
+    }
+    return currentRoute === path;
+  };
 
   return (
     <Wrapper>
@@ -30,7 +36,7 @@ function Navigation({ currentRoute, onNavigate }: Props) {
           <NavButton
             key={item.path}
             type="button"
-            $active={currentRoute === item.path}
+            $active={isActive(item.path)}
             onClick={() => onNavigate(item.path)}
           >
             {item.label}

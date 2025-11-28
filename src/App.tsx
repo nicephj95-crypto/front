@@ -10,6 +10,7 @@ import Login from "./pages/login";
 import ResetPassword from "./pages/resetPassword";
 import Signup from "./pages/signup";
 import BookList from "./pages/books";
+import BookDetail from "./pages/bookDetail";
 import { GlobalStyle } from "./style/global";
 import { themes } from "./style/theme";
 
@@ -18,6 +19,12 @@ function AppContent() {
   const { route, navigate } = useHashRouter();
 
   const renderPage = () => {
+    if (route.startsWith("/books/")) {
+      const [, , bookIdRaw] = route.split("/");
+      const bookId = Number(bookIdRaw);
+      return <BookDetail bookId={bookId} onNavigate={navigate} />;
+    }
+
     switch (route) {
       case "/signup":
         return <Signup />;
