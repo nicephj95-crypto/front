@@ -4,12 +4,14 @@ import { fetchBooks } from "../api/bookApi";
 import Footer from "../components/common/Footer";
 import Header from "../components/common/Header";
 import Title from "../components/common/Title";
+import { useHashRouter } from "../hooks/useHashRouter";
 import { Book } from "../models/book.model";
 
 function BookList() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const { navigate } = useHashRouter();
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -38,11 +40,18 @@ function BookList() {
 
         <Grid>
           {books.map(book => (
-            <Card key={book.id}>
+            <CardButton
+              key={book.id}
+              type="button"
+              onClick={() => navigate(`/books/${book.id}`)}
+            >
               <CardTitle>{book.title}</CardTitle>
-              <Meta>{book.author} · {book.publishedYear}년 · {book.category}</Meta>
+              <Meta>
+                {book.author} · {book.publishedYear}년 · {book.category}
+              </Meta>
               <Description>{book.description}</Description>
-            </Card>
+              <ActionHint>상세 정보 보기 →</ActionHint>
+            </CardButton>
           ))}
         </Grid>
       </MainContent>
@@ -73,7 +82,7 @@ const Grid = styled.div`
   gap: 12px;
 `;
 
-const Card = styled.article`
+const CardButton = styled.button`
   padding: 16px;
   border-radius: 10px;
   background: ${({ theme }) => theme.colors.secondary};
@@ -81,6 +90,18 @@ const Card = styled.article`
   flex-direction: column;
   gap: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    border-color: ${({ theme }) => theme.colors.primary};
+    outline: none;
+  }
 `;
 
 const CardTitle = styled.h3`
@@ -97,6 +118,11 @@ const Meta = styled.p`
 const Description = styled.p`
   margin: 0;
   line-height: 1.5;
+`;
+
+const ActionHint = styled.span`
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.primary};
 `;
 
 const StatusMessage = styled.p`
