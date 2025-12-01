@@ -11,6 +11,9 @@ import ResetPassword from "./pages/resetPassword";
 import Signup from "./pages/signup";
 import BookList from "./pages/books";
 import BookDetail from "./pages/bookDetail";
+import CartPage from "./pages/cart";
+import OrderFormPage from "./pages/orderForm";
+import OrderHistoryPage from "./pages/orderHistory";
 import { GlobalStyle } from "./style/global";
 import { themes } from "./style/theme";
 
@@ -34,6 +37,12 @@ function AppContent() {
         return <ResetPassword />;
       case "/books":
         return <BookList />;
+      case "/cart":
+        return <CartPage />;
+      case "/orders/new":
+        return <OrderFormPage />;
+      case "/orders":
+        return <OrderHistoryPage />;
       case "/":
       default:
         return <Home />;
