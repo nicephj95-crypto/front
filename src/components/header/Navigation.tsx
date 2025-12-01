@@ -12,6 +12,9 @@ interface Props {
 const navItems = [
   { path: "/", label: "홈" },
   { path: "/books", label: "도서목록" },
+  { path: "/cart", label: "장바구니" },
+  { path: "/orders/new", label: "주문서 작성" },
+  { path: "/orders", label: "주문 내역" },
   { path: "/signup", label: "회원가입" },
   { path: "/login", label: "로그인" },
   { path: "/reset-password", label: "비밀번호 초기화" },
@@ -22,6 +25,12 @@ function Navigation({ currentRoute, onNavigate }: Props) {
   const isActive = (path: string) => {
     if (path === "/books") {
       return currentRoute.startsWith("/books");
+    }
+    if (path === "/orders") {
+      return currentRoute === "/orders";
+    }
+    if (path === "/orders/new") {
+      return currentRoute === "/orders/new";
     }
     return currentRoute === path;
   };
