@@ -12,6 +12,7 @@ interface Props {
 const navItems = [
   { path: "/", label: "홈" },
   { path: "/books", label: "도서목록" },
+  { path: "/cart", label: "장바구니" },
   { path: "/signup", label: "회원가입" },
   { path: "/login", label: "로그인" },
   { path: "/reset-password", label: "비밀번호 초기화" },
@@ -19,6 +20,12 @@ const navItems = [
 
 function Navigation({ currentRoute, onNavigate }: Props) {
   const { user, logout } = useAuth();
+  const isActive = (path: string) => {
+    if (path === "/books") {
+      return currentRoute.startsWith("/books");
+    }
+    return currentRoute === path;
+  };
 
   return (
     <Wrapper>
@@ -30,7 +37,7 @@ function Navigation({ currentRoute, onNavigate }: Props) {
           <NavButton
             key={item.path}
             type="button"
-            $active={currentRoute === item.path}
+            $active={isActive(item.path)}
             onClick={() => onNavigate(item.path)}
           >
             {item.label}
