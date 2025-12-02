@@ -44,3 +44,6 @@ const BOOKS: Book[] = [
 ];
 
 export const listBooks = (): Book[] => BOOKS;
+
+export const findBookById = (id: number): Book | undefined =>
+  BOOKS.find(book => book.id === id);

@@ -1,30 +1,16 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchBooks } from "../api/bookApi";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
-import Title from "../components/common/Title";
-import { Book } from "../models/book.model";
+
+import AsyncSnippet from "components/common/AsyncSnippet";
+import Footer from "components/common/Footer";
+import Header from "components/common/Header";
+import Title from "components/common/Title";
+import { useBooksQuery } from "hooks/useBooksQuery";
+import { useHashRouter } from "hooks/useHashRouter";
 
 function BookList() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    const loadBooks = async () => {
-      try {
-        const data = await fetchBooks();
-        setBooks(data);
-      } catch (err) {
-        setError("도서 목록을 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBooks();
-  }, []);
+  const { navigate } = useHashRouter();
+  const { data: books = [], isLoading, error } = useBooksQuery();
+  const errorMessage = error ? "도서 목록을 불러오는 중 오류가 발생했습니다." : "";
 
   return (
     <PageWrapper>
@@ -33,16 +19,22 @@ function BookList() {
         <Title size="large">도서목록</Title>
         <p>강의에서 만든 데이터 레이어를 사용해 도서 정보를 불러옵니다.</p>
 
-        {loading && <StatusMessage>불러오는 중...</StatusMessage>}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <AsyncSnippet isLoading={isLoading} error={errorMessage} />
 
         <Grid>
           {books.map(book => (
-            <Card key={book.id}>
+            <CardButton
+              key={book.id}
+              type="button"
+              onClick={() => navigate(`/books/${book.id}`)}
+            >
               <CardTitle>{book.title}</CardTitle>
-              <Meta>{book.author} · {book.publishedYear}년 · {book.category}</Meta>
+              <Meta>
+                {book.author} · {book.publishedYear}년 · {book.category}
+              </Meta>
               <Description>{book.description}</Description>
-            </Card>
+              <ActionHint>상세 정보 보기 →</ActionHint>
+            </CardButton>
           ))}
         </Grid>
       </MainContent>
@@ -73,7 +65,7 @@ const Grid = styled.div`
   gap: 12px;
 `;
 
-const Card = styled.article`
+const CardButton = styled.button`
   padding: 16px;
   border-radius: 10px;
   background: ${({ theme }) => theme.colors.secondary};
@@ -81,6 +73,18 @@ const Card = styled.article`
   flex-direction: column;
   gap: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    border-color: ${({ theme }) => theme.colors.primary};
+    outline: none;
+  }
 `;
 
 const CardTitle = styled.h3`
@@ -99,13 +103,9 @@ const Description = styled.p`
   line-height: 1.5;
 `;
 
-const StatusMessage = styled.p`
-  margin: 0;
-`;
-
-const ErrorMessage = styled.p`
-  margin: 0;
-  color: crimson;
+const ActionHint = styled.span`
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.primary};
 `;
 
 export default BookList;

@@ -1,23 +1,32 @@
-// src/App.tsx
-import styled from "styled-components";
-import { ThemeProvider } from "styled-components";
-import Navigation from "./components/header/Navigation";
-import { AuthProvider } from "./context/AuthContext";
-import { ThemeProviderContext, useTheme } from "./context/ThemeContext";
-import { useHashRouter } from "./hooks/useHashRouter";
-import Home from "./pages/home";
-import Login from "./pages/login";
-import ResetPassword from "./pages/resetPassword";
-import Signup from "./pages/signup";
-import BookList from "./pages/books";
-import { GlobalStyle } from "./style/global";
-import { themes } from "./style/theme";
+import React, { useRef } from "react";
+import styled, { ThemeProvider } from "styled-components";
+
+import Navigation from "components/header/Navigation";
+import { AuthProvider } from "context/AuthContext";
+import { ThemeProviderContext, useTheme } from "context/ThemeContext";
+import { useHashRouter } from "hooks/useHashRouter";
+import BookDetail from "pages/bookDetail";
+import BookList from "pages/books";
+import Cart from "pages/cart";
+import Home from "pages/home";
+import Login from "pages/login";
+import ResetPassword from "pages/resetPassword";
+import Signup from "pages/signup";
+import { GlobalStyle } from "style/global";
+import { themes } from "style/theme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function AppContent() {
   const { themeName } = useTheme();
   const { route, navigate } = useHashRouter();
 
   const renderPage = () => {
+    if (route.startsWith("/books/")) {
+      const [, , bookIdRaw] = route.split("/");
+      const bookId = Number(bookIdRaw);
+      return <BookDetail bookId={bookId} onNavigate={navigate} />;
+    }
+
     switch (route) {
       case "/signup":
         return <Signup />;
@@ -27,6 +36,8 @@ function AppContent() {
         return <ResetPassword />;
       case "/books":
         return <BookList />;
+      case "/cart":
+        return <Cart />;
       case "/":
       default:
         return <Home />;
@@ -47,9 +58,21 @@ function AppContent() {
 }
 
 function App() {
+  const queryClient = useRef(new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000,
+      },
+    },
+  })).current;
+
   return (
     <ThemeProviderContext>
-      <AppContent />
+      <QueryClientProvider client={queryClient}>
+        <React.StrictMode>
+          <AppContent />
+        </React.StrictMode>
+      </QueryClientProvider>
     </ThemeProviderContext>
   );
 }

@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
+import { ReactNode, createContext, useEffect, useMemo, useState } from "react";
 import { resetPassword as resetPasswordApi, signIn } from "../api/authApi";
 import { ResetPasswordPayload, SignInPayload, User } from "../models/user.model";
 
@@ -9,7 +9,7 @@ interface AuthContextValue {
   resetPassword: (payload: ResetPasswordPayload) => Promise<string>;
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const STORAGE_KEY = "bookstore_current_user";
 
@@ -71,10 +71,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}

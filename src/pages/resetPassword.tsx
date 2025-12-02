@@ -1,12 +1,13 @@
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 import styled from "styled-components";
-import Button from "../components/common/Button";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
-import Input from "../components/common/Input";
-import Title from "../components/common/Title";
-import { useAuth } from "../context/AuthContext";
-import { ResetPasswordPayload } from "../models/user.model";
+
+import Button from "components/common/Button";
+import Footer from "components/common/Footer";
+import Header from "components/common/Header";
+import Input from "components/common/Input";
+import Title from "components/common/Title";
+import { useAuth } from "hooks/useAuth";
+import { ResetPasswordPayload } from "models/user.model";
 
 const initialForm: ResetPasswordPayload = {
   email: "",
