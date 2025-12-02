@@ -1,12 +1,12 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import Button from "../components/common/Button";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
-import Input from "../components/common/Input";
-import Title from "../components/common/Title";
-import { useAuth } from "../context/AuthContext";
-import { ResetPasswordPayload } from "../models/user.model";
+import Button from "components/common/Button";
+import Footer from "components/common/Footer";
+import Header from "components/common/Header";
+import Input from "components/common/Input";
+import Title from "components/common/Title";
+import { useAuthMutations } from "hooks/useAuthMutations";
+import { ResetPasswordPayload } from "models/user.model";
 
 const initialForm: ResetPasswordPayload = {
   email: "",
@@ -14,10 +14,8 @@ const initialForm: ResetPasswordPayload = {
 };
 
 function ResetPassword() {
-  const { resetPassword } = useAuth();
   const [form, setForm] = useState<ResetPasswordPayload>(initialForm);
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [error, setError] = useState<string>("");
+  const { resetPasswordMutation } = useAuthMutations();
   const [message, setMessage] = useState<string>("");
 
   const isSubmitDisabled = useMemo(() => {
@@ -29,24 +27,23 @@ function ResetPassword() {
       setForm(prev => ({ ...prev, [field]: event.target.value }));
     };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (isSubmitDisabled) return;
 
-    setStatus("loading");
-    setError("");
     setMessage("");
-
-    try {
-      const responseMessage = await resetPassword(form);
-      setStatus("success");
-      setMessage(responseMessage);
-      setForm(initialForm);
-    } catch (err) {
-      setStatus("idle");
-      setError(err instanceof Error ? err.message : "비밀번호 초기화에 실패했습니다.");
-    }
+    resetPasswordMutation.mutate(form, {
+      onSuccess: responseMessage => {
+        setMessage(responseMessage);
+      },
+    });
   };
+
+  useEffect(() => {
+    if (resetPasswordMutation.isSuccess) {
+      setForm(initialForm);
+    }
+  }, [resetPasswordMutation.isSuccess]);
 
   return (
     <PageWrapper>
@@ -74,12 +71,18 @@ function ResetPassword() {
               onChange={handleChange("newPassword")}
             />
           </Label>
-          <Button type="submit" disabled={isSubmitDisabled || status === "loading"}>
-            {status === "loading" ? "변경 중..." : "비밀번호 변경"}
+          <Button type="submit" disabled={isSubmitDisabled || resetPasswordMutation.isPending}>
+            {resetPasswordMutation.isPending ? "변경 중..." : "비밀번호 변경"}
           </Button>
         </ResetForm>
 
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {resetPasswordMutation.isError && (
+          <ErrorMessage>
+            {resetPasswordMutation.error instanceof Error
+              ? resetPasswordMutation.error.message
+              : "비밀번호 초기화에 실패했습니다."}
+          </ErrorMessage>
+        )}
         {message && <SuccessMessage>{message}</SuccessMessage>}
       </MainContent>
       <Footer />

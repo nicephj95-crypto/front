@@ -1,21 +1,23 @@
 // src/App.tsx
 import styled from "styled-components";
 import { ThemeProvider } from "styled-components";
-import Navigation from "./components/header/Navigation";
-import { AuthProvider } from "./context/AuthContext";
-import { ThemeProviderContext, useTheme } from "./context/ThemeContext";
-import { useHashRouter } from "./hooks/useHashRouter";
-import Home from "./pages/home";
-import Login from "./pages/login";
-import ResetPassword from "./pages/resetPassword";
-import Signup from "./pages/signup";
-import BookList from "./pages/books";
-import BookDetail from "./pages/bookDetail";
-import CartPage from "./pages/cart";
-import OrderFormPage from "./pages/orderForm";
-import OrderHistoryPage from "./pages/orderHistory";
-import { GlobalStyle } from "./style/global";
-import { themes } from "./style/theme";
+import Navigation from "components/header/Navigation";
+import { AuthProvider } from "context/AuthContext";
+import { ThemeProviderContext, useTheme } from "context/ThemeContext";
+import { useHashRouter } from "hooks/useHashRouter";
+import { queryClient } from "lib/queryClient";
+import { QueryClientProvider } from "lib/reactQuery";
+import BookDetail from "pages/bookDetail";
+import BookList from "pages/books";
+import CartPage from "pages/cart";
+import Home from "pages/home";
+import Login from "pages/login";
+import OrderFormPage from "pages/orderForm";
+import OrderHistoryPage from "pages/orderHistory";
+import ResetPassword from "pages/resetPassword";
+import Signup from "pages/signup";
+import { GlobalStyle } from "style/global";
+import { themes } from "style/theme";
 
 function AppContent() {
   const { themeName } = useTheme();
@@ -64,9 +66,11 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProviderContext>
-      <AppContent />
-    </ThemeProviderContext>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProviderContext>
+        <AppContent />
+      </ThemeProviderContext>
+    </QueryClientProvider>
   );
 }
 

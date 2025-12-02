@@ -1,12 +1,13 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import Button from "../components/common/Button";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
-import Input from "../components/common/Input";
-import Title from "../components/common/Title";
-import { useAuth } from "../context/AuthContext";
-import { SignInPayload } from "../models/user.model";
+import Button from "components/common/Button";
+import Footer from "components/common/Footer";
+import Header from "components/common/Header";
+import Input from "components/common/Input";
+import Title from "components/common/Title";
+import { useAuth } from "context/AuthContext";
+import { useAuthMutations } from "hooks/useAuthMutations";
+import { SignInPayload } from "models/user.model";
 
 const initialForm: SignInPayload = {
   email: "",
@@ -14,10 +15,9 @@ const initialForm: SignInPayload = {
 };
 
 function Login() {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
+  const { signInMutation } = useAuthMutations();
   const [form, setForm] = useState<SignInPayload>(initialForm);
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 
   const isSubmitDisabled = useMemo(() => {
@@ -29,23 +29,23 @@ function Login() {
       setForm(prev => ({ ...prev, [field]: event.target.value }));
     };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (isSubmitDisabled) return;
 
-    setStatus("loading");
-    setError("");
     setMessage("");
-
-    try {
-      await login(form);
-      setStatus("success");
-      setMessage("로그인에 성공했습니다. 환영합니다!");
-    } catch (err) {
-      setStatus("idle");
-      setError(err instanceof Error ? err.message : "로그인 중 오류가 발생했습니다.");
-    }
+    signInMutation.mutate(form, {
+      onSuccess: welcomeMessage => {
+        setMessage(welcomeMessage);
+      },
+    });
   };
+
+  useEffect(() => {
+    if (signInMutation.isSuccess) {
+      setForm(initialForm);
+    }
+  }, [signInMutation.isSuccess]);
 
   return (
     <PageWrapper>
@@ -73,13 +73,19 @@ function Login() {
               onChange={handleChange("password")}
             />
           </Label>
-          <Button type="submit" disabled={isSubmitDisabled || status === "loading"}>
-            {status === "loading" ? "로그인 중..." : "로그인"}
+          <Button type="submit" disabled={isSubmitDisabled || signInMutation.isPending}>
+            {signInMutation.isPending ? "로그인 중..." : "로그인"}
           </Button>
         </LoginForm>
 
         {user && <SuccessBox>현재 로그인: {user.name} ({user.email})</SuccessBox>}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {signInMutation.isError && (
+          <ErrorMessage>
+            {signInMutation.error instanceof Error
+              ? signInMutation.error.message
+              : "로그인 중 오류가 발생했습니다."}
+          </ErrorMessage>
+        )}
         {message && <SuccessMessage>{message}</SuccessMessage>}
       </MainContent>
       <Footer />
