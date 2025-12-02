@@ -1,12 +1,12 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { signUp } from "../api/authApi";
-import Button from "../components/common/Button";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
-import Input from "../components/common/Input";
-import Title from "../components/common/Title";
-import { SignUpPayload } from "../models/user.model";
+import Button from "components/common/Button";
+import Footer from "components/common/Footer";
+import Header from "components/common/Header";
+import Input from "components/common/Input";
+import Title from "components/common/Title";
+import { useAuthMutations } from "hooks/useAuthMutations";
+import { SignUpPayload } from "models/user.model";
 
 const initialForm: SignUpPayload = {
   name: "",
@@ -16,8 +16,7 @@ const initialForm: SignUpPayload = {
 
 function Signup() {
   const [form, setForm] = useState<SignUpPayload>(initialForm);
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [error, setError] = useState<string>("");
+  const { signUpMutation } = useAuthMutations();
   const [successMessage, setSuccessMessage] = useState<string>("");
 
   const isSubmitDisabled = useMemo(() => {
@@ -29,24 +28,23 @@ function Signup() {
       setForm(prev => ({ ...prev, [field]: event.target.value }));
     };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (isSubmitDisabled) return;
 
-    setStatus("loading");
-    setError("");
     setSuccessMessage("");
-
-    try {
-      const response = await signUp(form);
-      setStatus("success");
-      setSuccessMessage(response.message);
-      setForm(initialForm);
-    } catch (err) {
-      setStatus("idle");
-      setError(err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.");
-    }
+    signUpMutation.mutate(form, {
+      onSuccess: response => {
+        setSuccessMessage(response.message);
+      },
+    });
   };
+
+  useEffect(() => {
+    if (signUpMutation.isSuccess) {
+      setForm(initialForm);
+    }
+  }, [signUpMutation.isSuccess]);
 
   return (
     <PageWrapper>
@@ -82,12 +80,18 @@ function Signup() {
               onChange={handleChange("password")}
             />
           </Label>
-          <Button type="submit" disabled={isSubmitDisabled || status === "loading"}>
-            {status === "loading" ? "가입 중..." : "회원가입"}
+          <Button type="submit" disabled={isSubmitDisabled || signUpMutation.isPending}>
+            {signUpMutation.isPending ? "가입 중..." : "회원가입"}
           </Button>
         </SignupForm>
 
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {signUpMutation.isError && (
+          <ErrorMessage>
+            {signUpMutation.error instanceof Error
+              ? signUpMutation.error.message
+              : "알 수 없는 오류가 발생했습니다."}
+          </ErrorMessage>
+        )}
         {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
       </MainContent>
       <Footer />

@@ -1,10 +1,10 @@
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
-import { resetPassword as resetPasswordApi, signIn } from "../api/authApi";
-import { ResetPasswordPayload, SignInPayload, User } from "../models/user.model";
+import { resetPassword as resetPasswordApi, signIn } from "api/authApi";
+import { ResetPasswordPayload, SignInPayload, User } from "models/user.model";
 
 interface AuthContextValue {
   user: User | null;
-  login: (payload: SignInPayload) => Promise<void>;
+  login: (payload: SignInPayload) => Promise<string>;
   logout: () => void;
   resetPassword: (payload: ResetPasswordPayload) => Promise<string>;
 }
@@ -46,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await signIn(payload);
     setUser(response.user);
     writeStoredUser(response.user);
+    return response.message;
   };
 
   const logout = () => {

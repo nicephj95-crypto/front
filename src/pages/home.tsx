@@ -1,10 +1,12 @@
 import styled from "styled-components";
-import Footer from "../components/common/Footer";
-import Header from "../components/common/Header";
-import Button from "../components/common/Button";
-import Input from "../components/common/Input";
-import Title from "../components/common/Title";
-import { formatNuber } from "../utils/format";
+import Button from "components/common/Button";
+import Footer from "components/common/Footer";
+import Header from "components/common/Header";
+import Input from "components/common/Input";
+import SnippetCard from "components/common/SnippetCard";
+import Title from "components/common/Title";
+import { todayLectureSnippets } from "data/snippets";
+import { formatNuber } from "utils/format";
 
 const COUNT = 10000;
 
@@ -22,6 +24,15 @@ function Home() {
           <Input placeholder="검색어를 입력하세요" />
           <Button>검색하기</Button>
         </FormArea>
+
+        <SnippetSection>
+          <Title size="medium">오늘의 강의 스니펫</Title>
+          <SnippetGrid>
+            {todayLectureSnippets.map(snippet => (
+              <SnippetCard key={snippet.title} {...snippet} />
+            ))}
+          </SnippetGrid>
+        </SnippetSection>
       </MainContent>
       <Footer />
     </PageWrapper>
@@ -56,6 +67,18 @@ const FormArea = styled.section`
   padding: 16px;
   border-radius: 8px;
   background: ${({ theme }) => theme.colors.secondary};
+`;
+
+const SnippetSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const SnippetGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
 `;
 
 export default Home;
