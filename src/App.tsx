@@ -16,6 +16,7 @@ import OrderFormPage from "pages/orderForm";
 import OrderHistoryPage from "pages/orderHistory";
 import ResetPassword from "pages/resetPassword";
 import Signup from "pages/signup";
+import LectureLab from "pages/lectureLab";
 import { GlobalStyle } from "style/global";
 import { themes } from "style/theme";
 
@@ -45,6 +46,8 @@ function AppContent() {
         return <OrderFormPage />;
       case "/orders":
         return <OrderHistoryPage />;
+      case "/lectures/today":
+        return <LectureLab />;
       case "/":
       default:
         return <Home />;
