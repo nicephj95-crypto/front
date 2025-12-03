@@ -12,6 +12,7 @@ interface Props {
 const navItems = [
   { path: "/", label: "홈" },
   { path: "/books", label: "도서목록" },
+  { path: "/lectures/today", label: "오늘의 강의" },
   { path: "/cart", label: "장바구니" },
   { path: "/orders/new", label: "주문서 작성" },
   { path: "/orders", label: "주문 내역" },

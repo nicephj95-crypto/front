@@ -14,4 +14,14 @@ export const todayLectureSnippets = [
     description: "공통 훅으로 가입/로그인/비밀번호 초기화 폼 로직을 통일했습니다.",
     code: `const isSubmitting = signUpMutation.isPending;\nconst error = signUpMutation.error;`,
   },
+  {
+    title: "리뷰 피드 모킹 서버",
+    description: "setTimeout 기반 모킹 서버로 리뷰 목록/작성 흐름을 체험합니다.",
+    code: `await fetchReviewFeed({ page: 1, limit: 5, bookId });`,
+  },
+  {
+    title: "UI 인터랙션 모음",
+    description: "드롭다운, 탭, 모달, 토스트, 무한스크롤을 단일 페이지에서 시연합니다.",
+    code: `<Tabs items={tabs} />\n<Modal open={open} />`,
+  },
 ];
