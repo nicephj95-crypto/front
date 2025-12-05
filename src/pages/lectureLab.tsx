@@ -135,18 +135,16 @@ function LectureLab() {
       <MainContent>
         <Hero>
           <div>
-            <Title size="large">오늘의 강의: 모킹 · 리뷰 · 인터랙션</Title>
-            <p>
-              모킹 서버 호출부터 리뷰 목록/작성, 드롭다운·탭·토스트·모달·무한 스크롤까지 한 번에 경험하세요.
-            </p>
+            <Title size="large">오늘의 강의: 메인 화면 섹션 &amp; 모바일 대응</Title>
+            <p>리뷰/신간/베스트/배너 섹션을 모킹 서버와 함께 실습하며 반응형 UI를 완성해요.</p>
             <TagList>
-              <Tag>모킹서버작성</Tag>
-              <Tag>리뷰목록</Tag>
-              <Tag>리뷰작성</Tag>
-              <Tag>드롭다운</Tag>
-              <Tag>탭</Tag>
-              <Tag>토스트</Tag>
-              <Tag>모달</Tag>
+              <Tag>리뷰 섹션</Tag>
+              <Tag>신간 섹션</Tag>
+              <Tag>베스트 섹션</Tag>
+              <Tag>배너 섹션</Tag>
+              <Tag>모바일 대응</Tag>
+              <Tag>리뷰 목록</Tag>
+              <Tag>리뷰 작성</Tag>
               <Tag>무한스크롤</Tag>
             </TagList>
           </div>
